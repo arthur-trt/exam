@@ -6,20 +6,34 @@
 /*   By: arthur <arthur@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 16:46:51 by arthur            #+#    #+#             */
-/*   Updated: 2022/01/17 19:45:29 by arthur           ###   ########.fr       */
+/*   Updated: 2022/01/17 20:15:15 by arthur           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "microshell.h"
 
-void	add_to_list(t_list **cmds, char *word, int type)
+void	fatal_error(t_data **data)
+{
+	ft_putstr_err("error: fatal\n");
+	while ((*data)->cmds != NULL)
+		del_next_pipe(data);
+	free(*data);
+	(*data) = NULL;
+	exit (EXIT_FAILURE);
+}
+
+void	add_to_list(t_data **data, t_list **cmds, char *word, int type)
 {
 	t_list	*new;
 	t_list	*tmp;
 	
 	new = malloc(sizeof(t_list));
+	if (new == NULL)
+		fatal_error(data);
 	new->type = type;
 	new->word = ft_strdup(word);
+	if (new->word == NULL)
+		fatal_error(data);
 	new->next = NULL;
 	if ((*cmds) == NULL)
 	{
@@ -42,10 +56,10 @@ void	parse_args(t_data **data, char **argv, int *i)
 		if (strcmp(argv[(*i)], "|") == 0)
 		{
 			(*data)->nb_cmd += 1;
-			add_to_list(&((*data)->cmds), "|", PIPE);
+			add_to_list(data, &((*data)->cmds), "|", PIPE);
 		}
 		else
-			add_to_list(&((*data)->cmds), argv[(*i)], WORD);
+			add_to_list(data, &((*data)->cmds), argv[(*i)], WORD);
 		(*i)++;
 	}
 }
@@ -56,22 +70,34 @@ void	exec_simple(t_data *data, char **envp)
 	pid_t	pid;
 	int		ret;
 
-	pid = fork();
-	if (pid == 0)
+	if (strcmp("cd", data->cmds->word) == 0)
 	{
-		argv = build_argv(data);
-		execve(argv[0], argv, envp);
-		exit(0);
+		ft_cd(data);
 	}
-	waitpid(pid, &ret, 0);
+	else
+	{
+		pid = fork();
+		if (pid == 0)
+		{
+			argv = build_argv(data);
+			if (execve(argv[0], argv, envp) != 0)
+			{
+				ft_putstr_err("error: cannot execute ");
+				ft_putstr_err(argv[0]);
+				ft_putchar_fd(2, '\n');
+			}
+			exit(0);
+		}
+		waitpid(pid, &ret, 0);
+	}
 }
 
 void	piper(t_data *data, char **envp)
 {
 	int		fds[4];
 	pid_t	pid;
-	int		i;
-	int		nb_exec;
+	size_t		i;
+	size_t	nb_exec;
 	int		ret;
 	
 	pipe(fds);
@@ -112,9 +138,8 @@ void	piper(t_data *data, char **envp)
 	
 }
 
-int		exec(t_data *data, char**envp)
+void		exec(t_data *data, char**envp)
 {
-	char	**argv;
 	int		fd[2];
 
 	fd[0] = dup(STDIN_FILENO);
@@ -142,6 +167,8 @@ int	main(int argc, char **argv, char **envp)
 	while(argc > i)
 	{
 		data = malloc(sizeof(t_data));
+		if (data == NULL)
+			fatal_error(&data);
 		data->cmds = NULL;
 		data->nb_cmd = 1;
 		parse_args(&data, argv, &i);

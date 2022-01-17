@@ -6,7 +6,7 @@
 /*   By: arthur <arthur@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 16:49:44 by arthur            #+#    #+#             */
-/*   Updated: 2022/01/17 19:34:06 by arthur           ###   ########.fr       */
+/*   Updated: 2022/01/17 20:12:39 by arthur           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	ft_putchar_fd(int fd, char c)
 {
-	write(1, &c, 1);
+	write(fd, &c, 1);
 }
 
 void	ft_putstr(char *s)
@@ -54,7 +54,7 @@ char	*ft_strdup(char *s)
 	len = ft_strlen(s);
 	res = malloc((len + 1) * sizeof(char));
 	if (res == NULL)
-		exit(EXIT_FAILURE);
+		return (NULL);
 	i = 0;
 	while (i <= len)
 	{
@@ -124,9 +124,4 @@ void	del_next_pipe(t_data **data)
 		(*data)->cmds = next;
 		tmp = next;
 	}
-}
-
-void	free_data(t_data **data)
-{
-	
 }

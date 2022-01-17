@@ -6,7 +6,7 @@
 /*   By: arthur <arthur@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 16:50:34 by arthur            #+#    #+#             */
-/*   Updated: 2022/01/17 19:31:44 by arthur           ###   ########.fr       */
+/*   Updated: 2022/01/17 20:01:09 by arthur           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,5 +48,6 @@ char	**build_argv(t_data *data);
 void	del_next_pipe(t_data **data);
 void	free_data(t_data **data);
 char	*ft_strdup(char *s);
+void	ft_cd(t_data *data);
 
 #endif
