@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   microshell.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arthur <arthur@student.42.fr>              +#+  +:+       +#+        */
+/*   By: atrouill <atrouill@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 16:46:51 by arthur            #+#    #+#             */
-/*   Updated: 2022/01/17 20:15:15 by arthur           ###   ########.fr       */
+/*   Updated: 2022/02/16 11:14:36 by atrouill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	add_to_list(t_data **data, t_list **cmds, char *word, int type)
 {
 	t_list	*new;
 	t_list	*tmp;
-	
+
 	new = malloc(sizeof(t_list));
 	if (new == NULL)
 		fatal_error(data);
@@ -99,7 +99,7 @@ void	piper(t_data *data, char **envp)
 	size_t		i;
 	size_t	nb_exec;
 	int		ret;
-	
+
 	pipe(fds);
 	pipe(fds + 2);
 	nb_exec = 1;
@@ -115,7 +115,7 @@ void	piper(t_data *data, char **envp)
 			i = 0;
 			while (i < 4)
 				close(fds[i++]);
-			exec_simple(data, envp);	
+			exec_simple(data, envp);
 			exit(0);
 		}
 		close(fds[0]);
@@ -135,7 +135,7 @@ void	piper(t_data *data, char **envp)
 	i = 0;
 	while (i < 4)
 		close(fds[i++]);
-	
+
 }
 
 void		exec(t_data *data, char**envp)
@@ -162,7 +162,7 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_data	*data;
 	int		i;
-	
+
 	i = 1;
 	while(argc > i)
 	{
@@ -172,7 +172,8 @@ int	main(int argc, char **argv, char **envp)
 		data->cmds = NULL;
 		data->nb_cmd = 1;
 		parse_args(&data, argv, &i);
-		exec(data, envp);
+		if (data->cmds != NULL)
+			exec(data, envp);
 		del_next_pipe(&data);
 		free(data);
 		(data) = NULL;

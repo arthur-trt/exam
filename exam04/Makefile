@@ -32,12 +32,12 @@ OBJECTS_BONUS		:= $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES_BONUS:.$(SRCEXT
 
 #Flags, Libraries and Includes
 cflags.release		:= -Wall -Werror -Wextra
-cflags.valgrind		:= -Wall -Werror -Wextra -DDEBUG -ggdbi -fsanitize=undefined -rdynamic
+cflags.valgrind		:= -Wall -Werror -Wextra -DDEBUG -ggdb 
 cflags.debug		:= -Wall -Werror -Wextra -DDEBUG -ggdb -fsanitize=address -fno-omit-frame-pointer
 CFLAGS				:= $(cflags.$(BUILD))
 CPPFLAGS			:= $(cflags.$(BUILD)) -std=c++98
 
-lib.release			:=  -L/home/arthur/Documents/42/ft_mallocator/mallocator
+lib.release			:=  
 lib.valgrind		:= $(lib.release)
 lib.debug			:= $(lib.release) -fsanitize=address -fno-omit-frame-pointer
 LIB					:= $(lib.$(BUILD))
